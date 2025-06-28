@@ -1,6 +1,13 @@
 # 🧠 Bitespeed Backend Task: Identity Reconciliation
 
-This project implements a backend API to reconcile identities across multiple customer purchases based on phone numbers and emails. The goal is to track all contacts that belong to the same person even if different combinations of phone/email are used.
+This project is a backend API built using **Next.js App Router**, **Prisma**, and **PostgreSQL** to reconcile customer identities based on shared email and phone number.
+
+---
+
+## 🌐 Hosted API
+
+> ✅ **Production API Endpoint:**  
+> [`POST https://bitespeed-backend-olive.vercel.app/api/identify`](https://bitespeed-backend-olive.vercel.app/api/identify)
 
 ---
 
@@ -8,27 +15,28 @@ This project implements a backend API to reconcile identities across multiple cu
 
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
-- **Database:** SQLite (or PostgreSQL)
+- **Database:** PostgreSQL (via Neon)
 - **ORM:** Prisma
-- **API Format:** RESTful JSON
+- **Deployment:** Vercel
 
 ---
 
-## 📂 Folder Structure
+## 📁 Project Structure
 
 ```
 .
-├── app/api/identify/route.ts       # Main API endpoint
-├── prisma/schema.prisma            # Contact model definition
-├── utils/contactUtils.ts           # Linked contact resolver
-├── lib/prisma.ts                   # Prisma client config
-├── .env                            # Environment variables
-├── tsconfig.json / package.json    # Config and dependencies
+├── app/api/identify/route.ts       # Main API logic
+├── prisma/schema.prisma            # DB model
+├── utils/contactUtils.ts           # Utility to fetch linked contacts
+├── lib/prisma.ts                   # Prisma client setup
+├── .env                            # Database config
+├── next.config.ts                  # Next.js config (lint skipping for build)
+├── package.json / tsconfig.json    # Project setup
 ```
 
 ---
 
-## 🧪 API Usage
+## 📮 API Usage
 
 ### Endpoint
 ```
@@ -36,28 +44,29 @@ POST /api/identify
 ```
 
 ### Request Body
-
 ```json
 {
-  "email": "example@domain.com",   
-  "phoneNumber": "1234567890"      
+  "email": "example@domain.com",       // optional
+  "phoneNumber": "1234567890"          // optional
 }
 ```
 
-### Response Body
+> ⚠️ At least one of `email` or `phoneNumber` is required.
+
+---
+
+### Response Format
 
 ```json
 {
   "contact": {
     "primaryContatctId": 1,
-    "emails": ["a@b.com", "x@y.com"],
-    "phoneNumbers": ["1234567890", "9999999999"],
-    "secondaryContactIds": [2, 3]
+    "emails": ["example@domain.com"],
+    "phoneNumbers": ["1234567890"],
+    "secondaryContactIds": []
   }
 }
 ```
-
-> ❗ You must send at least one of `email` or `phoneNumber`.
 
 ---
 
@@ -65,24 +74,23 @@ POST /api/identify
 
 | Test Case | Description |
 |-----------|-------------|
-| New email+phone | Creates new primary |
+| New email + phone | Creates new primary |
 | Match by phone, new email | Adds as secondary |
 | Match by email, new phone | Adds as secondary |
 | Exact match | Returns existing group |
-| Match only phone/email | Returns resolved group |
-| Merging two primaries | Older one becomes primary |
-| No match | New primary created |
-| Empty body | Returns 400 error |
+| Only phone/email match | Returns linked group |
+| Merge 2 primaries | Oldest becomes primary |
+| Invalid request | Returns 400 error |
 
 ---
 
-## 🛠 Setup Instructions
+## 🛠 Local Setup
 
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/bitespeed-identity.git
-cd bitespeed-identity
+git clone https://github.com/kk7188048/Bitespeed_Backend.git
+cd Bitespeed_Backend
 ```
 
 ### 2. Install dependencies
@@ -91,20 +99,20 @@ cd bitespeed-identity
 npm install
 ```
 
-### 3. Setup environment
+### 3. Create `.env` file
 
-```bash
-# .env
-DATABASE_URL="file:./dev.db"
+```env
+DATABASE_URL="postgresql://<user>:<pass>@<host>:<port>/<db>?sslmode=require"
 ```
 
-### 4. Run Prisma migrations
+### 4. Push schema and generate client
 
 ```bash
-npx prisma migrate dev --name init
+npx prisma db push
+npx prisma generate
 ```
 
-### 5. Start the dev server
+### 5. Run locally
 
 ```bash
 npm run dev
@@ -112,35 +120,40 @@ npm run dev
 
 ---
 
-## 🌐 Deployment
+## 🚀 Deployment on Vercel
 
-You can deploy this app using:
-- [Vercel](https://vercel.com/)
-- [Render](https://render.com/)
-- [Railway](https://railway.app/)
+This app is auto-deployed using Vercel.
 
-Make sure to set the correct `DATABASE_URL` in your deployed environment.
+### Production URL:
+> [`https://bitespeed-backend-olive.vercel.app`](https://bitespeed-backend-olive.vercel.app)
 
 ---
 
-## 📮 Submission Checklist
+## 📎 GitHub Repository
 
-- [x] `/api/identify` endpoint is exposed
-- [x] Hosted publicly via Vercel/Render
-- [x] Code is on GitHub with commits and documentation
-- [x] JSON body support for all requests
-- [x] Postman tested for all edge cases
+> [`https://github.com/kk7188048/Bitespeed_Backend`](https://github.com/kk7188048/Bitespeed_Backend)
 
 ---
 
-## 📎 Hosted API URL
+## ✅ Checklist
 
-> 🔗 `https://your-hosted-url.com/api/identify`
+- [x] `/api/identify` API implemented
+- [x] Publicly hosted on Vercel
+- [x] PostgreSQL via Neon
+- [x] Prisma ORM integrated
+- [x] Fully documented and tested via Postman
+- [x] Ready for production
 
 ---
 
-## 🧑‍💻 Author
+## 👨‍💻 Author
 
 **Krishna Kumar**  
-[LinkedIn](https://www.linkedin.com/in/your-profile)  
-[GitHub](https://github.com/your-username)
+[GitHub](https://github.com/kk7188048)  
+
+---
+
+## 📝 License
+
+This project is provided for Bitespeed technical assessment. You may reuse the code for educational or internal evaluation purposes.
+
