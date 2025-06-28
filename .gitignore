@@ -42,5 +42,5 @@ next-env.d.ts
 
 /app/generated/prisma
 /app/api/identify
-/Utils
+
 
